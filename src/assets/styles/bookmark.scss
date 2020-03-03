@@ -1,0 +1,57 @@
+// bookmark.ts
+// skyparadise.org, evgenyberezin.com
+
+.bookmark {
+    &-hoverzone {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 130px;
+        z-index: 1002;
+
+        //debug only
+        // background: rgba(red, .1);
+        // display: block;
+        // border-left: 1px solid red;
+    }
+
+    &-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 130px;
+        background: rgba(#000, .7);
+        visibility: none;
+        opacity: 0;
+        z-index: 1001;
+        transition: all .3s ease;
+
+        &-container {
+            width: calc(100% - 32px);
+            height: calc(100% - 32px);
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: space-between;
+            padding: 16px;
+
+            a {
+                text-decoration: underline;
+                color: #fff;
+                font-size: .8rem;
+                display: inline;
+                transition: .15s;
+
+                &:hover {
+                    color: #000;
+                }
+            }
+        }
+    }
+
+    &-show {
+        visibility: visible;
+        opacity: 1;
+    }
+}
