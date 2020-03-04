@@ -101,6 +101,7 @@ class Bookmark {
     // event listener for leaving 
     private HandlePanelZone(e: Event, self: this): void {
         self.HidePanel()
+        this.mouse_over_panel = false
     }
 
     // show panel, when hover
