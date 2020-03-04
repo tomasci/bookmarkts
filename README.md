@@ -2,7 +2,7 @@
 
 Bookmark.ts is the simplest version of [Bookmark.js](https://bespoyasov.ru/bookmark) but recreated in clear TypeScript.
 
-[![version](https://img.shields.io/badge/version-1.2-default.svg?style=flat-square)](https://github.com/tomasci/bookmarkts)
+[![version](https://img.shields.io/badge/version-1.2f1-default.svg?style=flat-square)](https://github.com/tomasci/bookmarkts)
 
 | -                                         | Bookmark.ts   |Bookmark.js    |
 | -                                         | -             |-              |
@@ -50,7 +50,7 @@ I test it only in some of them, so:
 
 Don't forget to change `PATH_TO_YOUR_STYLES` and `PATH_TO_YOUR_SCRIPTS` to your paths.
 
-## Using
+## Usage
 
 To add new bookmark into panel just follow next steps:
 * to any element `e.g. h1,h2.. p, div, etc` add class `bookmark` and

@@ -27,7 +27,8 @@ class Bookmark {
     private bm_hzone: HTMLElement
     private isScrolling: number
     private mouse_over_panel: boolean
-    private bookmark_cache: NodeList = null
+    private bookmark_cache: HTMLElement[] = null
+    private last_hash: string
 
     constructor(user_settings: Settings) {
         this.settings = user_settings
@@ -56,7 +57,7 @@ class Bookmark {
             this.mouse_over_panel = true
         })
 
-        let container = document.createElement('div')
+        let container: HTMLElement = document.createElement('div')
         container.classList.add('bookmark-panel-container')
         panel.appendChild(container)
 
@@ -68,9 +69,16 @@ class Bookmark {
     }
 
     // select all bookmarks in document
-    private SelectAllBookmarks(): NodeList {
+    private SelectAllBookmarks(): HTMLElement[] {
         if (this.bookmark_cache == null) {
-            this.bookmark_cache = document.querySelectorAll(".bookmark")
+            let bms: NodeList = document.querySelectorAll(".bookmark")
+            let cache: HTMLElement[] = []
+            bms.forEach((node: HTMLElement) => {
+                if ("bookmarkTitle" in node.dataset && node.dataset.bookmarkTitle != "") {
+                    cache.push(node)
+                }
+            })
+            this.bookmark_cache = cache
         }
 
         return this.bookmark_cache
@@ -78,7 +86,8 @@ class Bookmark {
 
     // add each bookmark as link to container
     private LoadStructure(container: HTMLElement): void {
-        let bms: NodeList = this.SelectAllBookmarks()
+        let bms: HTMLElement[] = this.SelectAllBookmarks()
+
         bms.forEach((node: HTMLElement, i: number) => {
             container.appendChild(this.MakeAnchor(node, i))
         })
@@ -96,6 +105,7 @@ class Bookmark {
             e.preventDefault()
             this.ScrollToElement(node) // guaranteed scroll to element when click in panel
             window.location.hash = hash
+            this.last_hash = hash
         })
 
         anchor.style.top = this.GetAnchorPosition(node) + '%'
@@ -135,9 +145,9 @@ class Bookmark {
 
     // get total document height
     private GetDocumentHeight(): number {
-        let body = document.body
-        let html = document.documentElement
-        let height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight)
+        let body: HTMLElement = document.body
+        let html: HTMLElement = document.documentElement
+        let height: number = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight)
         return height
     }
 
@@ -156,9 +166,9 @@ class Bookmark {
 
     // calculate anchor coords in panel using total document height and block position
     private GetAnchorPosition(node: HTMLElement): number {
-        let height = this.GetDocumentHeight()
+        let height: number = this.GetDocumentHeight()
         let nodepos: {top: number, left: number} = this.GetElementPosition(node)
-        let anchorpos = (nodepos.top * 90) / height // 100% is absolutely height of block, but Title can be bigger and padding also, so 90% is great.
+        let anchorpos: number = (nodepos.top * 90) / height // 100% is absolutely height of block, but Title can be bigger and padding also, so 90% is great.
         
         return anchorpos
     }
@@ -182,12 +192,16 @@ class Bookmark {
     }
 
     // get hash after load (it's for sharing, also it is watch for url changes and works when hash changed by user)
-    private GetBrowserHash() {
-        let hash = window.location.hash
-        let splitted_hash = hash.split('-')
+    private GetBrowserHash(): void {
+        let hash: string = window.location.hash
+        let splitted_hash: string[] = hash.split('-')
+
+        if (this.last_hash == hash) {
+            return
+        }
         
         if (splitted_hash[0] == '#bookmark') {
-            let nodes = this.SelectAllBookmarks()
+            let nodes: HTMLElement[] = this.SelectAllBookmarks()
             this.ScrollToElement(nodes[splitted_hash[1]])
         }
 
