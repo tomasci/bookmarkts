@@ -2,7 +2,7 @@
 
 Bookmark.ts is the simplest version of [Bookmark.js](https://bespoyasov.ru/bookmark) but recreated in clear TypeScript.
 
-[![version](https://img.shields.io/badge/version-1.2f1-default.svg?style=flat-square)](https://github.com/tomasci/bookmarkts)
+[![version](https://img.shields.io/badge/version-1.2f2-default.svg?style=flat-square)](https://github.com/tomasci/bookmarkts)
 
 | -                                         | Bookmark.ts   |Bookmark.js    |
 | -                                         | -             |-              |

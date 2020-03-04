@@ -7,7 +7,8 @@ window.onload = function() {
         scrollPosition: "center",
         scrollBehavior: "smooth",
         showPanelOnScroll: true,
-        showPanelOnScrollTimeout: 700
+        showPanelOnScrollTimeout: 700,
+        mobileSupport: false
     })
 }
 
@@ -17,6 +18,7 @@ interface Settings {
     scrollBehavior: ScrollBehavior,
     showPanelOnScroll: boolean
     showPanelOnScrollTimeout: number,
+    mobileSupport: boolean
 }
 
 class Bookmark {
@@ -33,6 +35,19 @@ class Bookmark {
     constructor(user_settings: Settings) {
         this.settings = user_settings
         this.body = document.body
+
+        if (this.CheckMobile()) {
+            // mobile
+            if (this.settings.mobileSupport) {
+                this.Init()
+            }
+        } else {
+            // not mobile
+            this.Init()
+        }
+    }
+
+    private Init(): void {
         this.CreateHoverZone()
         this.CreatePanel()
         this.OnScrollEvent()
@@ -153,7 +168,7 @@ class Bookmark {
 
     // get element coords
     private GetElementPosition(node: HTMLElement): {top: number, left: number} {
-        // from https://learn.javascript.ru/coordinates-document
+        // according to https://learn.javascript.ru/coordinates-document
         let rect: DOMRect = node.getBoundingClientRect()
 
         let position: {top: number, left: number} = {
@@ -175,7 +190,7 @@ class Bookmark {
 
     // show and hide panel onScroll
     private OnScrollEvent(): void {
-        // from https://gomakethings.com/detecting-when-a-visitor-has-stopped-scrolling-with-vanilla-javascript/
+        // according to https://gomakethings.com/detecting-when-a-visitor-has-stopped-scrolling-with-vanilla-javascript/
         document.addEventListener('scroll', (e: Event) => {
             window.clearTimeout(this.isScrolling)
 
@@ -208,5 +223,11 @@ class Bookmark {
         window.addEventListener('hashchange', (e: Event) => {
             this.GetBrowserHash()
         })
+    }
+
+    // check is mobile device
+    private CheckMobile(): boolean {
+        // according to https://coderwall.com/p/i817wa/one-line-function-to-detect-mobile-devices-with-javascript
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1)
     }
 }
