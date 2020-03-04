@@ -2,7 +2,7 @@
 
 Bookmark.ts is the simplest version of [Bookmark.js](https://bespoyasov.ru/bookmark) but recreated in clear TypeScript.
 
-[![version](https://img.shields.io/badge/version-1.1f1-default.svg?style=flat-square)](https://github.com/tomasci/bookmarkts)
+[![version](https://img.shields.io/badge/version-1.2-default.svg?style=flat-square)](https://github.com/tomasci/bookmarkts)
 
 | -                                         | Bookmark.ts   |Bookmark.js    |
 | -                                         | -             |-              |
@@ -17,14 +17,26 @@ Bookmark.ts is the simplest version of [Bookmark.js](https://bespoyasov.ru/bookm
 
 `*` features can be added later.
 
+## Support
+Script works in all modern browsers (I think).
+I test it only in some of them, so:
+
+| Browser   | Support   | Browser version       |
+| -         | -         | -                     |
+| Chrome    | yes       | 80.0.3987.122 64-bit  |
+| Firefox   | yes       | 73.0.1 64-bit         |
+| Edge*     | yes       | 44.18362.449.0        |
+
+`*` Edge is not on Chromium.
+
 ## Installation
 
 1. clone repo
 2. go to repo folder and find `build` folder
-3. in `build\assets` you can find `styles` and `js` folders
+3. in `build/assets` you can find `styles` and `js` folders
 4. copy from `styles` file named `bookmark.css` to your styles folder
 5. copy from `js` file named `bookmark.js` to your scripts folder
-6. open your `layout/template/view` and before `</head>` add next:
+6. open your `layout, template, view or ..` and before `</head>` add next:
 ~~~~
 <link rel="preload" href="PATH_TO_YOUR_STYLES/bookmark.css" as="style">
 <link rel="preload" href="PATH_TO_YOUR_SCRIPTS/bookmark.js" as="script">
@@ -34,7 +46,7 @@ Bookmark.ts is the simplest version of [Bookmark.js](https://bespoyasov.ru/bookm
 ~~~~
 <script src="PATH_TO_YOUR_SCRIPTS/bookmark.js" charset="utf-8" defer></script>
 ~~~~
-8. Okay, installation now complete.
+8. Okay, installation now completed.
 
 Don't forget to change `PATH_TO_YOUR_STYLES` and `PATH_TO_YOUR_SCRIPTS` to your paths.
 

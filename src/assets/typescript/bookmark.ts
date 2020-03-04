@@ -6,15 +6,17 @@ window.onload = function() {
         hoverZoneTimeout: 100,
         scrollPosition: "center",
         scrollBehavior: "smooth",
-        showPanelOnScroll: true
+        showPanelOnScroll: true,
+        showPanelOnScrollTimeout: 700
     })
 }
 
 interface Settings {
-    hoverZoneTimeout: number
+    hoverZoneTimeout: number,
     scrollPosition: ScrollLogicalPosition
     scrollBehavior: ScrollBehavior,
     showPanelOnScroll: boolean
+    showPanelOnScrollTimeout: number,
 }
 
 class Bookmark {
@@ -25,6 +27,7 @@ class Bookmark {
     private bm_hzone: HTMLElement
     private isScrolling: number
     private mouse_over_panel: boolean
+    private bookmark_cache: NodeList = null
 
     constructor(user_settings: Settings) {
         this.settings = user_settings
@@ -32,6 +35,7 @@ class Bookmark {
         this.CreateHoverZone()
         this.CreatePanel()
         this.OnScrollEvent()
+        this.GetBrowserHash()
     }
 
     // create hover zone
@@ -65,32 +69,42 @@ class Bookmark {
 
     // select all bookmarks in document
     private SelectAllBookmarks(): NodeList {
-        let bms: NodeList = document.querySelectorAll(".bookmark")
-        return bms
+        if (this.bookmark_cache == null) {
+            this.bookmark_cache = document.querySelectorAll(".bookmark")
+        }
+
+        return this.bookmark_cache
     }
 
     // add each bookmark as link to container
     private LoadStructure(container: HTMLElement): void {
-        let bms = this.SelectAllBookmarks()
-        bms.forEach((node: HTMLElement) => {
-            container.appendChild(this.MakeAnchor(node))
+        let bms: NodeList = this.SelectAllBookmarks()
+        bms.forEach((node: HTMLElement, i: number) => {
+            container.appendChild(this.MakeAnchor(node, i))
         })
     }
 
     // make link from bookmark
-    private MakeAnchor(node: HTMLElement): HTMLElement {
-        let anchor = document.createElement('a')
+    private MakeAnchor(node: HTMLElement, i: number): HTMLElement {
+        let anchor: HTMLAnchorElement = document.createElement('a')
         anchor.innerText = node.dataset.bookmarkTitle
-        anchor.href = "#"
+
+        let hash: string = "#bookmark-" + i
+        anchor.href = hash
 
         anchor.addEventListener('click', (e: Event) => {
             e.preventDefault()
-            node.scrollIntoView({block: this.settings.scrollPosition, behavior: this.settings.scrollBehavior})
+            this.ScrollToElement(node) // guaranteed scroll to element when click in panel
+            window.location.hash = hash
         })
 
         anchor.style.top = this.GetAnchorPosition(node) + '%'
 
         return anchor
+    }
+
+    private ScrollToElement(node: HTMLElement): void {
+        node.scrollIntoView({block: this.settings.scrollPosition, behavior: this.settings.scrollBehavior})
     }
 
     // event listener for hovering
@@ -149,6 +163,7 @@ class Bookmark {
         return anchorpos
     }
 
+    // show and hide panel onScroll
     private OnScrollEvent(): void {
         // from https://gomakethings.com/detecting-when-a-visitor-has-stopped-scrolling-with-vanilla-javascript/
         document.addEventListener('scroll', (e: Event) => {
@@ -162,7 +177,22 @@ class Bookmark {
                 if (!this.mouse_over_panel) {
                     this.HidePanel()
                 }
-            }, 700)
+            }, this.settings.showPanelOnScrollTimeout)
+        })
+    }
+
+    // get hash after load (it's for sharing, also it is watch for url changes and works when hash changed by user)
+    private GetBrowserHash() {
+        let hash = window.location.hash
+        let splitted_hash = hash.split('-')
+        
+        if (splitted_hash[0] == '#bookmark') {
+            let nodes = this.SelectAllBookmarks()
+            this.ScrollToElement(nodes[splitted_hash[1]])
+        }
+
+        window.addEventListener('hashchange', (e: Event) => {
+            this.GetBrowserHash()
         })
     }
 }
