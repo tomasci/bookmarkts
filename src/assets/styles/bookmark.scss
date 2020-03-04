@@ -33,15 +33,19 @@
             height: calc(100% - 32px);
             display: flex;
             flex-flow: column wrap;
-            justify-content: space-between;
+            // justify-content: space-between;
             padding: 16px;
+            position: relative;
 
             a {
                 text-decoration: underline;
+                // text-align: left;
+                // width: 100%;
                 color: #fff;
                 font-size: .8rem;
                 display: inline;
                 transition: .15s;
+                position: relative;
 
                 &:hover {
                     color: #000;

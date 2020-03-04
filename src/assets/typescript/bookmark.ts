@@ -5,14 +5,16 @@ window.onload = function() {
     new Bookmark({
         hoverZoneTimeout: 100,
         scrollPosition: "center",
-        scrollBehavior: "smooth"
+        scrollBehavior: "smooth",
+        showPanelOnScroll: true
     })
 }
 
 interface Settings {
     hoverZoneTimeout: number
     scrollPosition: ScrollLogicalPosition
-    scrollBehavior: ScrollBehavior
+    scrollBehavior: ScrollBehavior,
+    showPanelOnScroll: boolean
 }
 
 class Bookmark {
@@ -21,16 +23,19 @@ class Bookmark {
     private bm_panel: HTMLElement
     private bm_panel_container: HTMLElement
     private bm_hzone: HTMLElement
+    private isScrolling: number
+    private mouse_over_panel: boolean
 
-    constructor(settings: Settings) {
-        this.settings = settings
+    constructor(user_settings: Settings) {
+        this.settings = user_settings
         this.body = document.body
         this.CreateHoverZone()
         this.CreatePanel()
+        this.OnScrollEvent()
     }
 
     // create hover zone
-    private CreateHoverZone() {
+    private CreateHoverZone(): void {
         let hzone: HTMLElement = document.createElement('div')
         hzone.classList.add('bookmark-hoverzone')
         hzone.addEventListener('mouseenter', (e: Event) => this.HandleHoverZone(e, this))
@@ -39,10 +44,13 @@ class Bookmark {
     }
 
     // create panel
-    private CreatePanel() {
+    private CreatePanel(): void {
         let panel: HTMLElement = document.createElement('div')
         panel.classList.add("bookmark-panel")
         panel.addEventListener('mouseleave', (e: Event) => this.HandlePanelZone(e, this))
+        panel.addEventListener('mouseover', (e: Event) => {
+            this.mouse_over_panel = true
+        })
 
         let container = document.createElement('div')
         container.classList.add('bookmark-panel-container')
@@ -56,13 +64,13 @@ class Bookmark {
     }
 
     // select all bookmarks in document
-    private SelectAllBookmarks() {
+    private SelectAllBookmarks(): NodeList {
         let bms: NodeList = document.querySelectorAll(".bookmark")
         return bms
     }
 
     // add each bookmark as link to container
-    private LoadStructure(container: HTMLElement) {
+    private LoadStructure(container: HTMLElement): void {
         let bms = this.SelectAllBookmarks()
         bms.forEach((node: HTMLElement) => {
             container.appendChild(this.MakeAnchor(node))
@@ -70,7 +78,7 @@ class Bookmark {
     }
 
     // make link from bookmark
-    private MakeAnchor(node: HTMLElement) {
+    private MakeAnchor(node: HTMLElement): HTMLElement {
         let anchor = document.createElement('a')
         anchor.innerText = node.dataset.bookmarkTitle
         anchor.href = "#"
@@ -80,31 +88,80 @@ class Bookmark {
             node.scrollIntoView({block: this.settings.scrollPosition, behavior: this.settings.scrollBehavior})
         })
 
+        anchor.style.top = this.GetAnchorPosition(node) + '%'
+
         return anchor
     }
 
     // event listener for hovering
-    private HandleHoverZone(e: Event, self: this) {
+    private HandleHoverZone(e: Event, self: this): void {
         self.ShowPanel()
     }
 
     // event listener for leaving 
-    private HandlePanelZone(e: Event, self: this) {
+    private HandlePanelZone(e: Event, self: this): void {
         self.HidePanel()
     }
 
     // show panel, when hover
-    private ShowPanel() {
+    private ShowPanel(): void {
         this.bm_hzone.style.display = "none"
         this.bm_panel.classList.add('bookmark-show')
     }
 
     // and hide on leaving
-    private HidePanel() {
+    private HidePanel(): void {
         this.bm_panel.classList.remove('bookmark-show')
 
         setTimeout(() => {
             this.bm_hzone.style.display = "block"
         }, this.settings.hoverZoneTimeout)
+    }
+
+    // get total document height
+    private GetDocumentHeight(): number {
+        let body = document.body
+        let html = document.documentElement
+        let height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight)
+        return height
+    }
+
+    // get element coords
+    private GetElementPosition(node: HTMLElement): {top: number, left: number} {
+        // from https://learn.javascript.ru/coordinates-document
+        let rect: DOMRect = node.getBoundingClientRect()
+
+        let position: {top: number, left: number} = {
+            top: rect.top + pageYOffset,
+            left: rect.left + pageXOffset
+        }
+
+        return position
+    }
+
+    // calculate anchor coords in panel using total document height and block position
+    private GetAnchorPosition(node: HTMLElement): number {
+        let height = this.GetDocumentHeight()
+        let nodepos: {top: number, left: number} = this.GetElementPosition(node)
+        let anchorpos = (nodepos.top * 90) / height // 100% is absolutely height of block, but Title can be bigger and padding also, so 90% is great.
+        
+        return anchorpos
+    }
+
+    private OnScrollEvent(): void {
+        // from https://gomakethings.com/detecting-when-a-visitor-has-stopped-scrolling-with-vanilla-javascript/
+        document.addEventListener('scroll', (e: Event) => {
+            window.clearTimeout(this.isScrolling)
+
+            // when scroll - show
+            this.ShowPanel()
+
+            this.isScrolling = setTimeout(() => {
+                // if mouse not over panel than hide
+                if (!this.mouse_over_panel) {
+                    this.HidePanel()
+                }
+            }, 700)
+        })
     }
 }
