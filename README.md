@@ -13,7 +13,7 @@ Bookmark.ts is the simplest version of [Bookmark.js](https://bespoyasov.ru/bookm
 | scrollbar associate with links in panel   | yes           | yes           |
 | active links (shows where user now)       | no*           | yes           |
 | auto-naming (I think no need in that)     | no            | yes           |
-| hash in browser search bar (/uri#hash)    | no*           | yes           |
+| hash in browser search bar (/uri#hash)    | yes           | yes           |
 
 `*` features can be added later.
 
