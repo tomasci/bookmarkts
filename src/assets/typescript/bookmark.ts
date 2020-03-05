@@ -18,7 +18,7 @@ interface Settings {
     scrollBehavior: ScrollBehavior,
     showPanelOnScroll: boolean
     showPanelOnScrollTimeout: number,
-    mobileSupport: boolean
+    mobileSupport: boolean,
 }
 
 class Bookmark {
@@ -48,10 +48,12 @@ class Bookmark {
     }
 
     private Init(): void {
-        this.CreateHoverZone()
-        this.CreatePanel()
-        this.OnScrollEvent()
-        this.GetBrowserHash()
+        if (this.SelectAllBookmarks().length > 0) { // check for empty
+            this.CreateHoverZone()
+            this.CreatePanel()
+            this.OnScrollEvent()
+            this.GetBrowserHash()
+        }
     }
 
     // create hover zone
@@ -134,28 +136,27 @@ class Bookmark {
 
     // event listener for hovering
     private HandleHoverZone(e: Event, self: this): void {
-        self.ShowPanel()
+        self.ShowPanel(true)
     }
 
     // event listener for leaving 
     private HandlePanelZone(e: Event, self: this): void {
-        self.HidePanel()
-        this.mouse_over_panel = false
+        self.ShowPanel(false)
     }
 
-    // show panel, when hover
-    private ShowPanel(): void {
-        this.bm_hzone.style.display = "none"
-        this.bm_panel.classList.add('bookmark-show')
-    }
+    // show - true, hide - false
+    private ShowPanel(state: boolean): void {
+        if (state) {
+            this.bm_hzone.style.display = "none"
+            this.bm_panel.classList.add('bookmark-show')
+        } else {
+            this.bm_panel.classList.remove('bookmark-show')
+            this.mouse_over_panel = false
 
-    // and hide on leaving
-    private HidePanel(): void {
-        this.bm_panel.classList.remove('bookmark-show')
-
-        setTimeout(() => {
-            this.bm_hzone.style.display = "block"
-        }, this.settings.hoverZoneTimeout)
+            setTimeout(() => {
+                this.bm_hzone.style.display = "block"
+            }, this.settings.hoverZoneTimeout)
+        }
     }
 
     // get total document height
@@ -195,12 +196,12 @@ class Bookmark {
             window.clearTimeout(this.isScrolling)
 
             // when scroll - show
-            this.ShowPanel()
+            this.ShowPanel(true)
 
             this.isScrolling = setTimeout(() => {
                 // if mouse not over panel than hide
                 if (!this.mouse_over_panel) {
-                    this.HidePanel()
+                    this.ShowPanel(false)
                 }
             }, this.settings.showPanelOnScrollTimeout)
         })
@@ -217,7 +218,10 @@ class Bookmark {
         
         if (splitted_hash[0] == '#bookmark') {
             let nodes: HTMLElement[] = this.SelectAllBookmarks()
-            this.ScrollToElement(nodes[splitted_hash[1]])
+
+            if (Number(splitted_hash[1]) < nodes.length) {
+                this.ScrollToElement(nodes[splitted_hash[1]])
+            }
         }
 
         window.addEventListener('hashchange', (e: Event) => {

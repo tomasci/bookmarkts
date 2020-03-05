@@ -2,7 +2,7 @@
 
 Bookmark.ts is the simplest version of [Bookmark.js](https://bespoyasov.ru/bookmark) but recreated in clear TypeScript.
 
-[![version](https://img.shields.io/badge/version-1.2f2-default.svg?style=flat-square)](https://github.com/tomasci/bookmarkts)
+[![version](https://img.shields.io/badge/version-1.3-default.svg?style=flat-square)](https://github.com/tomasci/bookmarkts)
 
 | -                                         | Bookmark.ts   |Bookmark.js    |
 | -                                         | -             |-              |
@@ -11,13 +11,13 @@ Bookmark.ts is the simplest version of [Bookmark.js](https://bespoyasov.ru/bookm
 | show tree onHover beside scrollbar        | yes           | yes           |
 | activates onScroll                        | yes           | yes           |
 | scrollbar associate with links in panel   | yes           | yes           |
-| active links (shows where user now)       | no*           | yes           |
-| auto-naming (I think no need in that)     | no            | yes           |
 | hash in browser search bar (/uri#hash)    | yes           | yes           |
+| active links (shows where user now)       | no            | yes           |
+| auto-naming (I think no need in that)     | no            | yes           |
 
-`*` features can be added later.
+<!-- `*` features that can be added later. -->
 
-## Support
+## Browsers Support
 Script works in all modern browsers (I think).
 I test it only in some of them, so:
 
@@ -26,6 +26,7 @@ I test it only in some of them, so:
 | Chrome    | yes       | 80.0.3987.122 64-bit  |
 | Firefox   | yes       | 73.0.1 64-bit         |
 | Edge*     | yes       | 44.18362.449.0        |
+| Safari    | yes       | iOS 13.3              |
 
 `*` Edge is not on Chromium.
 
